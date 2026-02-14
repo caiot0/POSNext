@@ -4,6 +4,8 @@
 
 import frappe
 from frappe import translate
+import csv
+import os
 
 
 @frappe.whitelist()
@@ -17,6 +19,24 @@ def get_app_translations():
 		dict: Translation dictionary {source: translated}
 	"""
 	lang = frappe.local.lang or "en"
+	if lang == "pt-br":
+		try:
+			# Manual diagnostic read to bypass Frappe's build process for translations
+			translations = {}
+			app_path = frappe.get_app_path("pos_next")
+			file_path = os.path.join(app_path, "translations", "pt-br.csv")
+
+			with open(file_path, "r", encoding="utf-8") as f:
+				reader = csv.reader(f)
+				for row in reader:
+					if len(row) >= 2 and row[0]:
+						translations[row[0]] = row[1]
+			return translations
+		except Exception as e:
+			frappe.log_error(f"Manual CSV read for pt-br failed: {str(e)}")
+			# Fallback to the original method if manual read fails
+			return translate.get_all_translations(lang)
+
 	return translate.get_all_translations(lang)
 
 
