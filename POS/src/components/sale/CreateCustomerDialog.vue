@@ -399,8 +399,12 @@ const createCustomerResource = createResource({
 			doctype: "Customer",
 			customer_name: customerData.value.customer_name,
 			customer_type: "Individual",
-			customer_group: "Individual",
-			territory: "Brasil",
+			customer_group: customerGroups.value.includes("Individual")
+				? "Individual"
+				: (customerGroups.value[0] || "All Customer Groups"),
+			territory: territories.value.includes("Brasil")
+				? "Brasil"
+				: (territories.value[0] || "All Territories"),
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
 			pet_name: customerData.value.pet_name || "",
@@ -428,8 +432,12 @@ const updateCustomerResource = createResource({
 		name: props.customer?.name,
 		fieldname: {
 			customer_name: customerData.value.customer_name,
-			customer_group: "Individual",
-			territory: "Brasil",
+			customer_group: customerGroups.value.includes("Individual")
+				? "Individual"
+				: (customerGroups.value[0] || "All Customer Groups"),
+			territory: territories.value.includes("Brasil")
+				? "Brasil"
+				: (territories.value[0] || "All Territories"),
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
 			pet_name: customerData.value.pet_name || "",
