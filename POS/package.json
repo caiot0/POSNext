@@ -16,7 +16,6 @@
 		"copy-html-entry": "cp ../pos_next/public/pos/index.html ../pos_next/www/pos.html"
 	},
 	"dependencies": {
-		"@abdulrysr/saudi-riyal-new-symbol-font": "^1.0.8",
 		"@babel/helper-compilation-targets": "^7.28.6",
 		"@pinia/testing": "^1.0.3",
 		"@vue/test-utils": "^2.4.6",

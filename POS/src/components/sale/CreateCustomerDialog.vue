@@ -91,43 +91,70 @@
 					</div>
 				</div>
 
-				<!-- Email -->
+				<!-- Pet Name -->
 				<div>
 					<label class="block text-start text-sm font-medium text-gray-700 mb-2">
-						{{ __("Email") }}
+						Nome do Pet
 					</label>
-					<Input v-model="customerData.email_id" type="email" :placeholder="__('Enter email address')" />
+					<Input v-model="customerData.pet_name" type="text" placeholder="Insira o nome do pet" />
 				</div>
 
-				<!-- Customer Group -->
+				<!-- Pet Breed -->
 				<div>
 					<label class="block text-start text-sm font-medium text-gray-700 mb-2">
-						{{ __("Customer Group") }}
+						Raça
+					</label>
+					<AutocompleteSelect
+						v-model="customerData.pet_breed"
+						:options="petBreedSelectOptions"
+						placeholder="Insira a raça do pet"
+						:searchable="true"
+						:minSearchLength="0"
+					/>
+				</div>
+
+				<!-- Pet Size -->
+				<div>
+					<label class="block text-start text-sm font-medium text-gray-700 mb-2">
+						Porte
 					</label>
 					<select
-						v-model="customerData.customer_group"
+						v-model="customerData.pet_size"
 						class="w-full px-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
-						<option value="">{{ __("Select Customer Group") }}</option>
-						<option v-for="group in customerGroups" :key="group" :value="group">
-							{{ group }}
-						</option>
+						<option value="">Selecionar porte</option>
+						<option value="Pequeno">Pequeno</option>
+						<option value="Medio">Médio</option>
+						<option value="Grande">Grande</option>
 					</select>
 				</div>
 
-				<!-- Territory -->
+				<!-- Pet Age (years) -->
 				<div>
 					<label class="block text-start text-sm font-medium text-gray-700 mb-2">
-						{{ __("Territory") }}
+						Idade do Pet
+					</label>
+					<Input
+						v-model="customerData.pet_age_years"
+						type="number"
+						min="0"
+						max="40"
+						placeholder="Insira a idade em anos"
+					/>
+				</div>
+
+				<!-- Pet Sex -->
+				<div>
+					<label class="block text-start text-sm font-medium text-gray-700 mb-2">
+						Sexo do Pet
 					</label>
 					<select
-						v-model="customerData.territory"
+						v-model="customerData.pet_sex"
 						class="w-full px-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
-						<option value="">{{ __("Select Territory") }}</option>
-						<option v-for="territory in territories" :key="territory" :value="territory">
-							{{ territory }}
-						</option>
+						<option value="">Selecionar sexo</option>
+						<option value="Macho">Macho</option>
+						<option value="Fêmea">Fêmea</option>
 					</select>
 				</div>
 			</div>
@@ -187,6 +214,7 @@ import { usePOSPermissions } from "@/composables/usePermissions"
 import { useToast } from "@/composables/useToast"
 import { useCountriesStore } from "@/stores/countries"
 import { logger } from "@/utils/logger"
+import AutocompleteSelect from "@/components/common/AutocompleteSelect.vue"
 import { Button, Dialog, Input, createResource } from "frappe-ui"
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
 
@@ -228,6 +256,7 @@ const countrySearchRef = ref(null)
 
 const customerGroups = ref(["Commercial", "Individual", "Non Profit", "Government"])
 const territories = ref(["All Territories"])
+const petBreedOptions = ref([])
 
 const customerData = ref({
 	customer_name: "",
@@ -235,6 +264,12 @@ const customerData = ref({
 	email_id: "",
 	customer_group: "Individual",
 	territory: "All Territories",
+	pet_name: "",
+	pet_breed: "",
+	pet_size: "",
+	pet_birth_date: "",
+	pet_age_years: "",
+	pet_sex: "",
 })
 
 // =============================================================================
@@ -261,6 +296,13 @@ const filteredCountries = computed(() => {
 		(c) => c.name.toLowerCase().includes(query) || c.isd.includes(query) || c.code.toLowerCase().includes(query)
 	)
 })
+
+const petBreedSelectOptions = computed(() =>
+	petBreedOptions.value.map((breed) => ({
+		value: breed,
+		label: breed,
+	}))
+)
 
 // =============================================================================
 // Country & Territory Methods
@@ -331,6 +373,25 @@ const updateTerritoryFromCountry = () => {
 // API Resources
 // =============================================================================
 
+const ageYearsToBirthDate = (ageYears) => {
+	const years = parseInt(ageYears, 10)
+	if (Number.isNaN(years) || years < 0) return ""
+	const now = new Date()
+	const birth = new Date(now.getFullYear() - years, now.getMonth(), now.getDate())
+	return birth.toISOString().slice(0, 10)
+}
+
+const birthDateToAgeYears = (birthDate) => {
+	if (!birthDate) return ""
+	const birth = new Date(birthDate)
+	if (Number.isNaN(birth.getTime())) return ""
+	const now = new Date()
+	let age = now.getFullYear() - birth.getFullYear()
+	const monthDiff = now.getMonth() - birth.getMonth()
+	if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) age -= 1
+	return age >= 0 ? String(age) : ""
+}
+
 const createCustomerResource = createResource({
 	url: "frappe.client.insert",
 	makeParams: () => ({
@@ -342,6 +403,11 @@ const createCustomerResource = createResource({
 			territory: customerData.value.territory || __("All Territories"),
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
+			pet_name: customerData.value.pet_name || "",
+			pet_breed: customerData.value.pet_breed || "",
+			pet_size: customerData.value.pet_size || "",
+			pet_birth_date: customerData.value.pet_birth_date || "",
+			pet_sex: customerData.value.pet_sex || "",
 		},
 	}),
 	onSuccess: (data) => {
@@ -366,6 +432,11 @@ const updateCustomerResource = createResource({
 			territory: customerData.value.territory || __("All Territories"),
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
+			pet_name: customerData.value.pet_name || "",
+			pet_breed: customerData.value.pet_breed || "",
+			pet_size: customerData.value.pet_size || "",
+			pet_birth_date: customerData.value.pet_birth_date || "",
+			pet_sex: customerData.value.pet_sex || "",
 		},
 	}),
 	onSuccess: (data) => {
@@ -396,6 +467,23 @@ const createListResource = (doctype, onSuccess) =>
 
 const customerGroupsResource = createListResource("Customer Group", (names) => (customerGroups.value = names))
 const territoriesResource = createListResource("Territory", (names) => (territories.value = names))
+const petBreedOptionsResource = createResource({
+	url: "frappe.client.get_value",
+	makeParams: () => ({
+		doctype: "Custom Field",
+		filters: { name: "Customer-pet_breed" },
+		fieldname: ["options"],
+	}),
+	auto: false,
+	onSuccess: (data) => {
+		const optionsText = (data && data.options) || ""
+		petBreedOptions.value = optionsText
+			.split("\n")
+			.map((line) => line.trim())
+			.filter(Boolean)
+	},
+	onError: (err) => log.error("Error loading pet breed options", err),
+})
 
 const posProfileResource = createResource({
 	url: "frappe.client.get_value",
@@ -423,6 +511,7 @@ const loadDialogData = async () => {
 	// Load form options
 	await territoriesResource.reload()
 	customerGroupsResource.reload()
+	await petBreedOptionsResource.reload()
 	checkPermissions()
 
 	// Set country from POS Profile
@@ -449,6 +538,7 @@ const handleCreate = async () => {
 	if (!customerData.value.customer_name) {
 		return showError(__("Customer Name is required"))
 	}
+	customerData.value.pet_birth_date = ageYearsToBirthDate(customerData.value.pet_age_years)
 	if (isEditMode.value) {
 		await updateCustomerResource.submit()
 	} else {
@@ -463,6 +553,12 @@ const resetForm = () => {
 		email_id: "",
 		customer_group: "Individual",
 		territory: "All Territories",
+		pet_name: "",
+		pet_breed: "",
+		pet_size: "",
+		pet_birth_date: "",
+		pet_age_years: "",
+		pet_sex: "",
 	})
 	selectedCountryCode.value = ""
 	phoneNumber.value = ""
@@ -486,6 +582,12 @@ watch(
 			customerData.value.email_id = customer.email_id || ""
 			customerData.value.customer_group = customer.customer_group || "Individual"
 			customerData.value.territory = customer.territory || "All Territories"
+			customerData.value.pet_name = customer.pet_name || ""
+			customerData.value.pet_breed = customer.pet_breed || ""
+			customerData.value.pet_size = customer.pet_size || ""
+			customerData.value.pet_birth_date = customer.pet_birth_date || ""
+			customerData.value.pet_age_years = birthDateToAgeYears(customer.pet_birth_date)
+			customerData.value.pet_sex = customer.pet_sex || ""
 			// Handle mobile_no with country code
 			if (customer.mobile_no) {
 				customerData.value.mobile_no = customer.mobile_no

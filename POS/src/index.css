@@ -1,22 +1,79 @@
-@import "./assets/Inter/inter.css";
+@import "./assets/PlusJakartaSans/plus-jakarta.css";
+@import "./assets/ClashDisplay/clash-display.css";
 @import "frappe-ui/style.css";
-@import "@abdulrysr/saudi-riyal-new-symbol-font/style.css";
 
 /* CSS Custom Properties for consistent z-index layering */
 :root {
 	--z-dialog-overlay: 400;
 	--z-dialog-content: 500;
 	--z-dropdown: 10000;
+	--font-base: "Plus Jakarta Sans", sans-serif;
+	--font-display: "Clash Display", "Plus Jakarta Sans", sans-serif;
 }
 
-/* Apply Saudi Riyal symbol font to body for currency support */
+/* Global font stack */
 body {
-	font-family: "SaudiRiyalSymbol", "Inter", sans-serif;
+	font-family: var(--font-base);
 }
 
-/* Ensure all text elements inherit the font stack with Saudi Riyal support */
+/* Ensure all text elements inherit the global stack */
 * {
 	font-family: inherit;
+}
+
+/* Secondary support font for emphasis (titles, buttons, amounts). */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+	font-family: var(--font-display);
+}
+
+button,
+.btn,
+[role="button"],
+input[type="button"],
+input[type="submit"] {
+	font-family: var(--font-display);
+}
+
+.currency-display,
+[class*="amount"],
+[class*="total"],
+[class*="price"],
+[class*="currency"] {
+	font-family: var(--font-display);
+	font-variant-numeric: tabular-nums;
+}
+
+/* Keep customer autocomplete suggestions highly readable. */
+.customer-suggestion-item,
+.customer-suggestion-item * {
+	font-family: var(--font-base) !important;
+}
+
+.customer-suggestion-name {
+	font-weight: 400 !important;
+	letter-spacing: 0 !important;
+}
+
+/* Font zoning for POS sale screen: red-marked sections in Plus Jakarta. */
+.pos-plusjakarta-tabs,
+.pos-plusjakarta-tabs *,
+.pos-plusjakarta-item-card,
+.pos-plusjakarta-item-card *,
+.pos-plusjakarta-cart-item,
+.pos-plusjakarta-cart-item * {
+	font-family: var(--font-base) !important;
+}
+
+/* Font zoning for totals summary (black-marked section) in Clash Display. */
+.pos-clash-totals,
+.pos-clash-totals * {
+	font-family: var(--font-display) !important;
 }
 
 /* Ensure frappe-ui dialogs render above sticky mobile navigation */

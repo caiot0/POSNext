@@ -291,22 +291,22 @@
 							:key="cust.name"
 							@mousedown.prevent="selectCustomer(cust)"
 							:class="[
-								'w-full text-start px-2 py-1.5 flex items-center gap-1.5 border-b border-gray-100 last:border-0 touch-manipulation select-none cursor-pointer active:bg-blue-200',
+								'w-full text-start px-2 py-1.5 flex items-center gap-1.5 border-b border-gray-100 last:border-0 touch-manipulation select-none cursor-pointer active:bg-blue-200 customer-suggestion-item',
 								index === selectedIndex ? 'bg-blue-100' : 'hover:bg-blue-50 active:bg-blue-100',
 							]"
 						>
 							<div
 								class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 pointer-events-none"
 							>
-								<span class="text-[10px] font-bold text-blue-600">{{
+								<span class="text-[10px] font-medium text-blue-600">{{
 									getInitials(cust.customer_name)
 								}}</span>
 							</div>
 							<div class="flex-1 min-w-0 pointer-events-none">
-								<p class="text-[11px] font-semibold text-gray-900 truncate">
+								<p class="text-xs font-normal text-gray-800 truncate customer-suggestion-name">
 									{{ cust.customer_name }}
 								</p>
-								<p v-if="cust.mobile_no" class="text-[9px] text-gray-600">
+								<p v-if="cust.mobile_no" class="text-[10px] font-normal text-gray-600">
 									{{ cust.mobile_no }}
 								</p>
 							</div>
@@ -666,7 +666,7 @@
 					v-for="(item, index) in items"
 					:key="index"
 					@click="openEditDialog(item)"
-					class="bg-white border border-gray-200 rounded-md p-1.5 sm:p-2 hover:border-blue-300 hover:shadow-md transition-all duration-200 active:scale-[0.99] cursor-pointer group"
+					class="bg-white border border-gray-200 rounded-md p-1.5 sm:p-2 hover:border-blue-300 hover:shadow-md transition-all duration-200 active:scale-[0.99] cursor-pointer group pos-plusjakarta-cart-item"
 				>
 					<div class="flex gap-1.5 sm:gap-2">
 						<!-- Item Image Thumbnail -->
@@ -1006,7 +1006,7 @@
 		</div>
 
 		<!-- Totals Summary -->
-		<div class="p-1.5 sm:p-2 bg-white border-t border-gray-200">
+		<div class="p-1.5 sm:p-2 bg-white border-t border-gray-200 pos-clash-totals">
 			<!-- Summary Details -->
 			<div v-if="items.length > 0" class="mb-1.5">
 				<div class="flex items-center justify-between text-xs text-gray-600 mb-0.5">

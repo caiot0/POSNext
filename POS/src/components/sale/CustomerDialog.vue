@@ -125,7 +125,7 @@
 							v-memo="[customer.name, index === selectedIndex]"
 							@click="selectCustomer(customer)"
 							:class="[
-								'w-full text-start p-3 rounded-lg border transition-all duration-75',
+								'w-full text-start p-3 rounded-lg border transition-all duration-75 customer-list-item',
 								index === selectedIndex
 									? 'border-blue-500 bg-blue-50 shadow-sm'
 									: 'border-gray-200 hover:border-blue-400 hover:bg-blue-50'
@@ -133,7 +133,7 @@
 						>
 							<div class="flex items-start justify-between">
 								<div class="flex-1 min-w-0">
-									<div class="font-semibold text-sm text-gray-900 truncate">
+									<div class="customer-name text-sm text-gray-800 truncate">
 										{{ customer.customer_name }}
 									</div>
 									<div class="text-xs text-gray-600 mt-1 gap-2">
@@ -305,5 +305,21 @@ async function handleCustomerCreated(customer) {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border-width: 0;
+}
+
+.customer-list-item {
+	font-family: var(--font-base) !important;
+}
+
+.customer-name {
+	font-family: var(--font-base) !important;
+	font-weight: 400 !important;
+	font-size: 0.95rem;
+	line-height: 1.35;
+	letter-spacing: 0;
+}
+
+.customer-list-item * {
+	font-family: var(--font-base) !important;
 }
 </style>
