@@ -255,7 +255,7 @@ const dropdownRef = ref(null)
 const countrySearchRef = ref(null)
 
 const customerGroups = ref(["Commercial", "Individual", "Non Profit", "Government"])
-const territories = ref(["All Territories"])
+const territories = ref(["Brasil"])
 const petBreedOptions = ref([])
 
 const customerData = ref({
@@ -263,7 +263,7 @@ const customerData = ref({
 	mobile_no: "",
 	email_id: "",
 	customer_group: "Individual",
-	territory: "All Territories",
+	territory: "Brasil",
 	pet_name: "",
 	pet_breed: "",
 	pet_size: "",
@@ -399,8 +399,8 @@ const createCustomerResource = createResource({
 			doctype: "Customer",
 			customer_name: customerData.value.customer_name,
 			customer_type: "Individual",
-			customer_group: customerData.value.customer_group || __("Individual"),
-			territory: customerData.value.territory || __("All Territories"),
+			customer_group: "Individual",
+			territory: "Brasil",
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
 			pet_name: customerData.value.pet_name || "",
@@ -428,8 +428,8 @@ const updateCustomerResource = createResource({
 		name: props.customer?.name,
 		fieldname: {
 			customer_name: customerData.value.customer_name,
-			customer_group: customerData.value.customer_group || __("Individual"),
-			territory: customerData.value.territory || __("All Territories"),
+			customer_group: "Individual",
+			territory: "Brasil",
 			mobile_no: customerData.value.mobile_no || "",
 			email_id: customerData.value.email_id || "",
 			pet_name: customerData.value.pet_name || "",
@@ -552,7 +552,7 @@ const resetForm = () => {
 		mobile_no: "",
 		email_id: "",
 		customer_group: "Individual",
-		territory: "All Territories",
+		territory: "Brasil",
 		pet_name: "",
 		pet_breed: "",
 		pet_size: "",
@@ -581,7 +581,7 @@ watch(
 			customerData.value.customer_name = customer.customer_name || ""
 			customerData.value.email_id = customer.email_id || ""
 			customerData.value.customer_group = customer.customer_group || "Individual"
-			customerData.value.territory = customer.territory || "All Territories"
+			customerData.value.territory = customer.territory || "Brasil"
 			customerData.value.pet_name = customer.pet_name || ""
 			customerData.value.pet_breed = customer.pet_breed || ""
 			customerData.value.pet_size = customer.pet_size || ""
